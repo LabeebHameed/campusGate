@@ -8,15 +8,6 @@ export default function Index() {
     <View className="flex-1 bg-white">
       <View className="flex-1 px-8 justify-between">
         <View className="flex-1 justify-center">
-          {/* DEMO IMAGE */}
-          <View className="items-center">
-            <Image
-              source={require("../../assets/images/auth2.png")}
-              className="size-96"
-              resizeMode="contain"
-            />
-          </View>
-
           <View className="flex-col gap-2">
             {/* GOOGLE SIGNIN BTN */}
             <TouchableOpacity
