@@ -9,15 +9,13 @@ export const aj = arcjet({
     // shield protects your app from common attacks e.g. SQL injection, XSS, CSRF attacks
     shield({ mode: "LIVE" }),
 
-    // bot detection - block all bots except search engines and mobile apps
+    // bot detection - block all bots except search engines
     detectBot({
       mode: "LIVE",
       allow: [
         "CATEGORY:SEARCH_ENGINE",
-        "CATEGORY:API", // Allow API clients
-        "CATEGORY:MOBILE", // Allow mobile apps
-        // allow legitimate search engine bots and mobile clients
-        // see full list at https://arcjet.com/bot-list
+        // Allow legitimate search engine bots
+        // API routes are handled by middleware skip
       ],
     }),
 
