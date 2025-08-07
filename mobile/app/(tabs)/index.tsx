@@ -6,6 +6,7 @@ import { router } from "expo-router";
 import CustomCarousel from "../../components/Carousel";
 import { CarouselItem, CategoryItem } from "../../types";
 import { getCarouselData } from "../../utils/data-helpers";
+import { useUserSync } from "@/hooks/useUserSync";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 // Calculate responsive values based on screen size
@@ -51,6 +52,9 @@ const HomeScreen = () => {
     // Handle filter functionality
     console.log('Filter pressed');
   }, []);
+
+
+  useUserSync();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
