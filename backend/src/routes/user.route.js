@@ -8,7 +8,6 @@ import { protectRoute } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-
 // protected routes
 router.post("/sync", protectRoute, syncUser);
 router.get("/me", protectRoute, getCurrentUser);

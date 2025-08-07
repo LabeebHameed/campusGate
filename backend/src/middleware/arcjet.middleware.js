@@ -4,6 +4,12 @@ import { aj } from "../config/arcjet.js";
 
 export const arcjetMiddleware = async (req, res, next) => {
   try {
+    // Skip Arcjet protection for API routes to allow mobile app access
+    if (req.path.startsWith('/api/')) {
+      console.log('Skipping Arcjet for API route:', req.path);
+      return next();
+    }
+
     const decision = await aj.protect(req, {
       requested: 1, // each request consumes 1 token
     });
