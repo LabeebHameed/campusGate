@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { ClerkExpressWithAuth } from "@clerk/express";
+import { clerkMiddleware } from "@clerk/express";
 
 import userRoutes from "./routes/user.route.js";
 import courseRoutes from "./routes/course.route.js";
@@ -9,26 +9,23 @@ import applicationRoutes from "./routes/application.route.js";
 import documentRoutes from "./routes/document.route.js";
 import notificationRoutes from "./routes/notification.route.js";
 
+
+
 // import commentRoutes from "./routes/comment.route.js";
 // import notificationRoutes from "./routes/notification.route.js";
 
 import { ENV } from "./config/env.js";
 import { connectDB } from "./config/db.js";
-// Arcjet import kept but disabled below
-// import { arcjetMiddleware } from "./middleware/arcjet.middleware.js";
+import { arcjetMiddleware } from "./middleware/arcjet.middleware.js";
 
 const app = express();
-
-// lightweight health check
-app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 app.use(cors());
 app.use(express.json());
 
-// Proper Clerk middleware for Express
-app.use(ClerkExpressWithAuth());
-// Temporarily disable Arcjet to test server startup
-// app.use(arcjetMiddleware);
+app.use(clerkMiddleware());
+app.use(arcjetMiddleware);
+
 
 app.get("/", (req, res) => res.send("Hello from server"));
 
@@ -61,4 +58,5 @@ const startServer = async () => {
 
 startServer();
 
+// export for vercel
 export default app;
