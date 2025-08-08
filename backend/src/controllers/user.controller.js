@@ -38,9 +38,15 @@ export const syncUser = asyncHandler(async (req, res) => {
     return res.status(400).json({ error: "User email not found" });
   }
 
-  const primaryEmail = clerkUser.emailAddresses[0].emailAddress;
+  // Prefer Clerk's primaryEmailAddressId when available
+  const primaryEmailId = clerkUser.primaryEmailAddressId;
+  const primaryEmail =
+    clerkUser.emailAddresses.find((e) => e.id === primaryEmailId)?.emailAddress ||
+    clerkUser.emailAddresses[0].emailAddress;
+
   const phone = clerkUser.phoneNumbers?.[0]?.phoneNumber || "";
   const location = clerkUser.publicMetadata?.location || "";
+  const roleFromClerk = clerkUser.publicMetadata?.role;
 
   // If a user exists with same email, link it to this Clerk account instead of creating a duplicate
   const existingByEmail = await User.findOne({ email: primaryEmail });
@@ -50,6 +56,9 @@ export const syncUser = asyncHandler(async (req, res) => {
     existingByEmail.lastName = clerkUser.lastName || existingByEmail.lastName;
     existingByEmail.phoneNumber = phone || existingByEmail.phoneNumber;
     existingByEmail.location = location || existingByEmail.location;
+    if (roleFromClerk) {
+      existingByEmail.role = roleFromClerk;
+    }
 
     const updated = await existingByEmail.save();
     return res.status(200).json({ user: updated, message: "Linked existing user by email" });
@@ -63,6 +72,7 @@ export const syncUser = asyncHandler(async (req, res) => {
     email: primaryEmail,
     phoneNumber: phone,
     location,
+    ...(roleFromClerk ? { role: roleFromClerk } : {}),
   };
 
   const user = await User.create(userData);
