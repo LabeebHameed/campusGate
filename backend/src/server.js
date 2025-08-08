@@ -37,11 +37,8 @@ if (missingEnv.length > 0) {
 }
 
 // Proper Clerk middleware for Express
-<<<<<<< HEAD
-app.use(ClerkExpressWithAuth());
-=======
+
 app.use(clerkMiddleware());
->>>>>>> 0f9a2a3 (User Sync Fixed)
 // Temporarily disable Arcjet to test server startup
 // app.use(arcjetMiddleware);
 
@@ -77,8 +74,5 @@ const startServer = async () => {
 
 startServer();
 
-<<<<<<< HEAD
 export default app;
-=======
-export default app;
->>>>>>> 0f9a2a3 (User Sync Fixed)
+
