@@ -1,59 +1,45 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { useLocalSearchParams, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView, View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
-import { getUniversityById } from '../../utils/data-helpers';
-import { SimpleCard } from '../../components/ui';
+import { getCollegeById } from '../../utils/data-helpers';
+import { useFavorites } from '../../hooks/useFavorites';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-export default function UniversityDetailsScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const [isFavorited, setIsFavorited] = useState(false);
-  
-  // Get university data using helper function
-  const university = getUniversityById(id as string);
+export default function CollegeDetailsScreen() {
+  const { id } = useLocalSearchParams();
+  const { isFavorite, toggleFavorite } = useFavorites();
 
-  // Fallback if university not found
-  if (!university) {
+  // Get college data using helper function
+  const college = getCollegeById(id as string);
+  const isCollegeFavorite = college ? isFavorite(college.id, 'college') : false;
+
+  // Fallback if college not found
+  if (!college) {
     return (
-      <SafeAreaView className="flex-1 bg-white items-center justify-center">
-        <Feather name="alert-circle" size={48} color="#EF4444" />
-        <Text className="text-xl font-bold text-gray-900 mt-4">University Not Found</Text>
-        <Text className="text-gray-500 mt-2">The requested university could not be found.</Text>
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 justify-center items-center px-6">
+          <Feather name="alert-circle" size={64} color="#EF4444" />
+          <Text className="text-xl font-bold text-gray-900 mt-4">College Not Found</Text>
+          <Text className="text-gray-500 mt-2">The requested college could not be found.</Text>
         <TouchableOpacity 
+            className="bg-blue-600 px-6 py-3 rounded-lg mt-6"
           onPress={() => router.back()}
-          className="mt-4 bg-gray-900 px-6 py-3 rounded-full"
         >
           <Text className="text-white font-semibold">Go Back</Text>
         </TouchableOpacity>
+        </View>
       </SafeAreaView>
     );
   }
 
-  const handleFavoritePress = () => {
-    setIsFavorited(!isFavorited);
-  };
-
-  const handleCoursePress = (courseId: string) => {
-    router.push(`/course/${courseId}` as any);
-  };
-
-  const handleBookTour = () => {
-    console.log('Book tour pressed');
-  };
-
-  const handleVirtualTour = () => {
-    console.log('Virtual tour pressed');
-  };
-
-  const handleSeeAllCourses = () => {
-    console.log('See all courses pressed');
-  };
-
-  const handleReadMore = () => {
-    console.log('Read more pressed');
+  const handleFavoriteToggle = async () => {
+    const result = await toggleFavorite(college.id, 'college');
+    if (result) {
+      // Optional: Show feedback to user
+      console.log(isFavorite(college.id, 'college') ? 'Added to favorites' : 'Removed from favorites');
+    }
   };
 
   return (
@@ -61,110 +47,150 @@ export default function UniversityDetailsScreen() {
       <ScrollView 
         className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
       >
-        {/* Hero Image with Navigation */}
+        {/* Header */}
+        <View className="relative">
+          <TouchableOpacity 
+            className="absolute top-4 left-4 z-10 w-10 h-10 bg-black/20 rounded-full justify-center items-center"
+            onPress={() => router.back()}
+          >
+            <Feather name="arrow-left" size={20} color="white" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/20 rounded-full justify-center items-center"
+            onPress={handleFavoriteToggle}
+          >
+            <Feather 
+              name="heart" 
+              size={20} 
+              color={isCollegeFavorite ? "#EF4444" : "#6B7280"}
+              fill={isCollegeFavorite ? "#EF4444" : "#6B7280"} 
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Hero Image */}
         <View className="relative">
           <Image 
-            source={{ uri: university.image }}
-            style={{ width: SCREEN_WIDTH, height: 250 }}
-            resizeMode="cover"
+            source={{ uri: college.image }}
+            style={{ 
+              width: SCREEN_WIDTH, 
+              height: 250,
+              resizeMode: 'cover'
+            }}
           />
           
-          {/* Navigation Overlay */}
-          <View className="absolute top-4 left-4 right-4 flex-row justify-between items-center">
-            <TouchableOpacity 
-              onPress={() => router.back()}
-              className="w-10 h-10 bg-white/90 rounded-full items-center justify-center"
-            >
-              <Feather name="chevron-left" size={20} color="#1F2937" />
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              onPress={handleFavoritePress}
-              className="w-10 h-10 bg-white/90 rounded-full items-center justify-center"
-            >
-              <Feather 
-                name="heart" 
-                size={20} 
-                color={isFavorited ? "#EF4444" : "#6B7280"}
-                fill={isFavorited ? "#EF4444" : "none"}
-              />
-            </TouchableOpacity>
-          </View>
+          {/* Gradient Overlay */}
+          <View 
+            className="absolute inset-0 bg-black/20"
+          />
         </View>
 
-        {/* University Information */}
-        <View className="px-4 py-6">
-          <Text className="text-2xl font-bold text-gray-900 mb-2">
-            {university.name}
-          </Text>
-          
-          <Text className="text-base text-gray-600 mb-3">
-            {university.location}
-          </Text>
-          
-          {/* Rating */}
-          <View className="flex-row items-center mb-4">
-            <Feather name="star" size={16} color="#F59E0B" />
-            <Text className="text-base font-semibold text-gray-900 ml-1">
-              {university.rating}
-            </Text>
-            <Text className="text-sm text-gray-500 ml-2">
-              {university.reviews}
-            </Text>
-          </View>
-          
-          {/* Description */}
+        {/* Content */}
+        <View className="px-6 py-6">
+          {/* College Information */}
           <View className="mb-6">
-            <Text className="text-base text-gray-700 leading-6">
-              {university.description}
+          <Text className="text-2xl font-bold text-gray-900 mb-2">
+              {college.name}
+          </Text>
+          
+            <View className="flex-row items-center mb-3">
+              <Feather name="map-pin" size={16} color="#6B7280" />
+              <Text className="text-gray-600 ml-2">{college.district}, {college.state}</Text>
+            </View>
+            
+          <View className="flex-row items-center mb-4">
+              <View className="flex-row items-center bg-green-100 px-3 py-1 rounded-full mr-3">
+                <Feather name="star" size={14} color="#059669" />
+                <Text className="text-green-700 font-semibold ml-1">{college.rating}</Text>
+              </View>
+              <Text className="text-gray-500">{college.reviews}</Text>
+            </View>
+
+            <Text className="text-gray-700 leading-6">
+              {college.description}
             </Text>
-            <TouchableOpacity onPress={handleReadMore} className="mt-2">
-              <Text className="text-blue-600 font-semibold">Read More</Text>
-            </TouchableOpacity>
           </View>
+          
+          {/* Quick Stats */}
+          <View className="bg-gray-50 rounded-xl p-4 mb-6">
+            <Text className="text-lg font-semibold text-gray-900 mb-3">Quick Info</Text>
+            <View className="space-y-2">
+              <View className="flex-row justify-between">
+                <Text className="text-gray-600">Category</Text>
+                <Text className="font-medium text-gray-900">{college.category}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text className="text-gray-600">Type</Text>
+                <Text className="font-medium text-gray-900">{college.type}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text className="text-gray-600">Management</Text>
+                <Text className="font-medium text-gray-900">{college.management}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text className="text-gray-600">Established</Text>
+                <Text className="font-medium text-gray-900">{college.establishYear}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text className="text-gray-600">Affiliated to</Text>
+                <Text className="font-medium text-gray-900">{college.universityName}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text className="text-gray-600">Fee Range</Text>
+                <Text className="font-medium text-gray-900">{college.feeRange}</Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Courses Section */}
+          <View className="mb-6">
+            <Text className="text-lg font-semibold text-gray-900 mb-4">Available Courses</Text>
+            {college.courses.map((courseId) => (
+              <TouchableOpacity 
+                key={courseId}
+                className="bg-white border border-gray-200 rounded-lg p-4 mb-3"
+                onPress={() => router.push(`/course/${courseId}`)}
+              >
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-1">
+                    <Text className="font-semibold text-gray-900 mb-1">
+                      {courseId.replace('-', ' ').toUpperCase()}
+                    </Text>
+                    <Text className="text-gray-500 text-sm">
+                      4 Years • ₹20,000 / Sem
+            </Text>
+                  </View>
+                  <Feather name="chevron-right" size={20} color="#6B7280" />
+                </View>
+            </TouchableOpacity>
+            ))}
         </View>
 
-        {/* Courses Section */}
-        <View className="mb-6">
-          <View className="flex-row justify-between items-center px-4 mb-4">
-            <Text className="text-xl font-bold text-gray-900">Courses</Text>
-            <TouchableOpacity onPress={handleSeeAllCourses}>
-              <Text className="text-blue-600 font-semibold">See All</Text>
+          {/* Contact Information */}
+          <View className="bg-blue-50 rounded-xl p-4 mb-6">
+            <Text className="text-lg font-semibold text-gray-900 mb-3">Contact Information</Text>
+            <TouchableOpacity className="flex-row items-center mb-2">
+              <Feather name="globe" size={16} color="#3B82F6" />
+              <Text className="text-blue-600 ml-2">{college.website}</Text>
             </TouchableOpacity>
           </View>
           
-          {university.courses.map((course) => (
-            <SimpleCard
-              key={course.id}
-              title={course.name}
-              subtitle={`${course.duration} - ${course.cost}`}
-              rating={course.rating}
-              onPress={() => handleCoursePress(course.id)}
-            />
-          ))}
+          {/* Apply Button */}
+          <TouchableOpacity 
+            className="bg-blue-600 py-4 rounded-xl"
+            onPress={() => {
+              // Handle apply logic
+              console.log('Apply to college:', college.name);
+            }}
+          >
+            <Text className="text-white text-center font-semibold text-lg">
+              Apply Now
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {/* Bottom Action Buttons */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-4">
-        <View className="flex-row space-x-3">
-          <TouchableOpacity 
-            onPress={handleBookTour}
-            className="flex-1 bg-gray-900 py-4 rounded-full items-center"
-          >
-            <Text className="text-white font-semibold text-base">Book Tour</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            onPress={handleVirtualTour}
-            className="flex-1 bg-gray-100 py-4 rounded-full items-center border border-gray-300"
-          >
-            <Text className="text-gray-900 font-semibold text-base">Virtual Tour</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </SafeAreaView>
   );
 } 

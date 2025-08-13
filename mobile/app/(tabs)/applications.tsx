@@ -1,136 +1,119 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 
-interface Application {
+interface ApplicationType {
   id: string;
-  university: string;
+  college: string;
   course: string;
+  status: 'pending' | 'approved' | 'rejected';
   appliedDate: string;
-  status: 'succeeded' | 'pending';
-  image: string;
 }
 
-const applicationData: Application[] = [
+const applications: ApplicationType[] = [
   {
     id: '1',
-    university: 'Kerala University',
-    course: 'B.tech (CSE)',
-    appliedDate: 'Feb 3, 2024',
-    status: 'succeeded',
-    image: 'https://via.placeholder.com/60x60/8B5A2B/FFFFFF?text=KU'
+    college: 'Kerala College',
+    course: 'Computer Science',
+    status: 'pending',
+    appliedDate: '2024-01-15'
   },
   {
     id: '2',
-    university: 'KTU University',
-    course: 'B.tech (CSE)',
-    appliedDate: 'March 24, 2024',
-    status: 'pending',
-    image: 'https://via.placeholder.com/60x60/4A90E2/FFFFFF?text=KTU'
+    college: 'KTU College',
+    course: 'Information Technology',
+    status: 'approved',
+    appliedDate: '2024-01-10'
   },
   {
     id: '3',
-    university: 'MG University',
-    course: 'B.tech (CSE)',
-    appliedDate: 'July 31, 2025',
-    status: 'pending',
-    image: 'https://via.placeholder.com/60x60/F5A623/FFFFFF?text=MG'
+    college: 'MG College',
+    course: 'Electronics',
+    status: 'rejected',
+    appliedDate: '2024-01-05'
   }
 ];
 
-interface StatusBadgeProps {
-  status: 'succeeded' | 'pending';
-}
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return 'text-green-600 bg-green-100';
+    case 'rejected':
+      return 'text-red-600 bg-red-100';
+    default:
+      return 'text-yellow-600 bg-yellow-100';
+  }
+};
 
-function StatusBadge({ status }: StatusBadgeProps) {
-  const isSucceeded = status === 'succeeded';
-  
-  return (
-    <View className={`flex-row items-center px-2 py-1 rounded-full ${isSucceeded ? 'bg-green-100' : 'bg-yellow-100'}`}>
-      <Feather 
-        name={isSucceeded ? 'check' : 'clock'} 
-        size={12} 
-        color={isSucceeded ? '#166534' : '#92400e'} 
-      />
-      <Text className={`ml-1 text-xs font-medium ${isSucceeded ? 'text-green-800' : 'text-yellow-800'}`}>
-        {isSucceeded ? 'Succeeded' : 'Pending'}
-      </Text>
-    </View>
-  );
-}
-
-interface ApplicationCardProps {
-  application: Application;
-}
-
-function ApplicationCard({ application }: ApplicationCardProps) {
-  return (
-    <View className="bg-white mx-4 mb-3 p-4 rounded-xl border border-gray-100 shadow-sm">
-      <View className="flex-row items-center">
-        <Image 
-          source={{ uri: application.image }}
-          className="w-15 h-15 rounded-xl mr-4"
-          resizeMode="cover"
-        />
-        <View className="flex-1">
-          <Text className="text-base font-bold text-gray-900 mb-1">
-            {application.university} - {application.course}
-          </Text>
-          <Text className="text-sm text-gray-500 mb-2">
-            Applied : {application.appliedDate}
-          </Text>
-          <StatusBadge status={application.status} />
-        </View>
-      </View>
-    </View>
-  );
-}
+const getStatusIcon = (status: string) => {
+  switch (status) {
+    case 'approved':
+      return 'check-circle';
+    case 'rejected':
+      return 'x-circle';
+    default:
+      return 'clock';
+  }
+};
 
 export default function ApplicationsScreen() {
-  const [activeTab, setActiveTab] = useState<'active' | 'cancelled'>('active');
-
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="flex-row items-center justify-between px-4 py-4">
-        <Text className="text-2xl font-bold text-gray-900">Applications</Text>
-        <View className="w-10 h-10 bg-gray-300 rounded-full" />
+      <View className="px-6 py-4 bg-white border-b border-gray-100">
+        <Text className="text-2xl font-bold text-gray-900">My Applications</Text>
+        <Text className="text-gray-500 mt-1">{applications.length} applications submitted</Text>
       </View>
 
-      {/* Tabs */}
-      <View className="flex-row px-4 mb-6">
-        <TouchableOpacity 
-          onPress={() => setActiveTab('active')}
-          className="mr-8"
-        >
-          <Text className={`text-base font-medium pb-2 ${activeTab === 'active' ? 'text-gray-900' : 'text-gray-400'}`}>
-            Active
-          </Text>
-          {activeTab === 'active' && (
-            <View className="h-0.5 bg-gray-900 rounded-full" />
-          )}
-        </TouchableOpacity>
-        
-        <TouchableOpacity onPress={() => setActiveTab('cancelled')}>
-          <Text className={`text-base font-medium pb-2 ${activeTab === 'cancelled' ? 'text-gray-900' : 'text-gray-400'}`}>
-            Cancelled
-          </Text>
-          {activeTab === 'cancelled' && (
-            <View className="h-0.5 bg-gray-900 rounded-full" />
-          )}
-        </TouchableOpacity>
-      </View>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="p-4 space-y-3">
+          {applications.map((application) => (
+            <TouchableOpacity
+              key={application.id}
+              className="bg-white p-4 rounded-xl border border-gray-100"
+              activeOpacity={0.7}
+            >
+              <View className="flex-row justify-between items-start mb-3">
+                <View className="flex-1">
+                  <Text className="text-lg font-semibold text-gray-900 mb-1">
+                    {application.college} - {application.course}
+                  </Text>
+                  <Text className="text-sm text-gray-500">
+                    Applied on {new Date(application.appliedDate).toLocaleDateString()}
+                  </Text>
+                </View>
+                
+                <View className={`flex-row items-center px-3 py-1 rounded-full ${getStatusColor(application.status)}`}>
+                  <Feather name={getStatusIcon(application.status) as any} size={14} />
+                  <Text className="ml-1 text-xs font-medium capitalize">
+                    {application.status}
+                  </Text>
+                </View>
+              </View>
 
-      {/* Applications List */}
-      <ScrollView 
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      >
-        {applicationData.map((application) => (
-          <ApplicationCard key={application.id} application={application} />
-        ))}
+              <View className="flex-row justify-between items-center pt-3 border-t border-gray-100">
+                <TouchableOpacity className="flex-row items-center">
+                  <Feather name="eye" size={16} color="#6B7280" />
+                  <Text className="text-gray-600 ml-2 text-sm">View Details</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity className="flex-row items-center">
+                  <Feather name="download" size={16} color="#6B7280" />
+                  <Text className="text-gray-600 ml-2 text-sm">Download</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {applications.length === 0 && (
+          <View className="flex-1 justify-center items-center py-20">
+            <Feather name="file-text" size={48} color="#D1D5DB" />
+            <Text className="text-lg font-medium text-gray-500 mt-4">No Applications Yet</Text>
+            <Text className="text-sm text-gray-400 mt-2 text-center px-8">
+              Start by exploring colleges and applying to your preferred courses
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

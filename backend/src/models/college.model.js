@@ -11,9 +11,10 @@ const collegeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    description: {
+    category: {
       type: String,
       default: "",
+      // This was previously "description" but now represents college category
     },
     state: {
       type: String,
@@ -29,11 +30,12 @@ const collegeSchema = new mongoose.Schema(
     },
     establishYear: {
       type: Number,
-      default: false,
+      default: 0,
     },
     type: {
       type: String,
       default: "",
+      // College type (different from category)
     },
     manegement: {
       type: String,
@@ -46,6 +48,41 @@ const collegeSchema = new mongoose.Schema(
     universityType: {
       type: String,
       default: "",
+    },
+    // Additional fields for enhanced functionality
+    description: {
+      type: String,
+      default: "",
+      // Actual description text for UI
+    },
+    image: {
+      type: String,
+      default: "",
+      // College image URL
+    },
+    rating: {
+      type: String,
+      default: "4.0",
+      // College rating as string
+    },
+    reviews: {
+      type: String,
+      default: "0 Reviews",
+      // Review count display
+    },
+    courses: [{
+      type: String,
+      // Array of course IDs offered by this college
+    }],
+    feeRange: {
+      type: String,
+      default: "",
+      // Fee range display (e.g., "₹20,000 - ₹50,000 per semester")
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+      // Whether college is active
     },
   },
   { timestamps: true }

@@ -43,16 +43,10 @@ const HomeScreen = () => {
     setSelectedCategory(categoryId);
   }, []);
 
-  const handleSearchSubmit = useCallback(() => {
-    // Handle search functionality
-    console.log('Searching for:', searchQuery);
-  }, [searchQuery]);
-
   const handleFilterPress = useCallback(() => {
     // Handle filter functionality
     console.log('Filter pressed');
   }, []);
-
 
   useUserSync();
 
@@ -94,18 +88,15 @@ const HomeScreen = () => {
 
         {/* Search Bar */}
         <View style={{ marginTop: sectionSpacing }}>
-          <View className="flex-row items-center bg-white rounded-full border border-gray-300 px-4 py-3 shadow-sm">
+          <View 
+            className="flex-row items-center bg-white rounded-full border border-gray-300 px-4 py-3 shadow-sm"
+          >
             <Feather name="search" size={20} color="#6B7280" />
-            <TextInput
-              placeholder="Search Courses / Colleges"
-              className="flex-1 ml-3 text-base text-gray-900"
-              placeholderTextColor="#6B7280"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              onSubmitEditing={handleSearchSubmit}
-              returnKeyType="search"
-              accessibilityLabel="Search input"
-            />
+            <View className="flex-1 ml-3">
+              <Text className="text-base text-gray-500">
+                {searchQuery || "Search Courses / Colleges"}
+              </Text>
+            </View>
             <Pressable
               className="w-12 h-12 bg-gray-900 rounded-full justify-center items-center"
               onPress={handleFilterPress}

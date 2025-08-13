@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "https://10.0.2.2:5001/api";
+const API_BASE_URL = "https://campus-gate.vercel.app/api";
 // ! 🔥 localhost api would not work on your actual physical device
 // const API_BASE_URL = "http://localhost:5001/api";
 
@@ -64,9 +64,9 @@ export const applicationApi = {
 };
 
 export const collegeApi = {
-  getAllColleges: (api: AxiosInstance) => api.get("/colleges"),
+  getAllColleges: (api: AxiosInstance) => api.get("/college"),
   getCollegeById: (api: AxiosInstance, collegeId: string) =>
-    api.get(`/colleges/${collegeId}`),
+    api.get(`/college/${collegeId}`),
   createCollege: (api: AxiosInstance, data: {
     name: string;
     description?: string;
@@ -74,17 +74,17 @@ export const collegeApi = {
     website?: string;
     contactEmail?: string;
     contactPhone?: string;
-  }) => api.post("/colleges", data),
+  }) => api.post("/college", data),
   updateCollege: (api: AxiosInstance, collegeId: string, data: any) =>
-    api.put(`/colleges/${collegeId}`, data),
+    api.put(`/college/${collegeId}`, data),
   deleteCollege: (api: AxiosInstance, collegeId: string) =>
-    api.delete(`/colleges/${collegeId}`),
+    api.delete(`/college/${collegeId}`),
 };
 
 export const courseApi = {
-  getAllCourses: (api: AxiosInstance) => api.get("/courses"),
+  getAllCourses: (api: AxiosInstance) => api.get("/course"),
   getCourseById: (api: AxiosInstance, courseId: string) =>
-    api.get(`/courses/${courseId}`),
+    api.get(`/course/${courseId}`),
   createCourse: (api: AxiosInstance, data: {
     title: string;
     description?: string;
@@ -93,9 +93,9 @@ export const courseApi = {
     fees?: number;
     eligibility?: string;
     applicationDeadline?: string;
-  }) => api.post("/courses", data),
+  }) => api.post("/course", data),
   updateCourse: (api: AxiosInstance, courseId: string, data: any) =>
-    api.put(`/courses/${courseId}`, data),
+    api.put(`/course/${courseId}`, data),
   deleteCourse: (api: AxiosInstance, courseId: string) =>
-    api.delete(`/courses/${courseId}`),
+    api.delete(`/course/${courseId}`),
 };

@@ -1,25 +1,25 @@
-import { universities, courses, favoriteItems, type University, type CourseDetails, type FavoriteItem } from '../data';
+import { colleges, courseDetails as courses, type College, type CourseDetails } from '../data';
 import { CarouselItem } from '../types';
 
 /**
- * Transform university data to carousel format for home page
+ * Transform college data to carousel format for home page
  */
 export function getCarouselData(): CarouselItem[] {
-  return Object.values(universities).map(university => ({
-    id: university.id,
-    imageUrl: university.image,
-    title: university.name,
-    location: university.location,
-    rating: university.rating,
-    reviews: university.reviews.replace('Reviews', 'reviews')
+  return Object.values(colleges).map(college => ({
+    id: college.id,
+    imageUrl: college.image,
+    title: college.name,
+    location: `${college.district}, ${college.state}`,
+    rating: college.rating,
+    reviews: college.reviews.replace('Reviews', 'reviews')
   }));
 }
 
 /**
- * Get university by ID
+ * Get college by ID
  */
-export function getUniversityById(id: string): University | null {
-  return universities[id] || null;
+export function getCollegeById(id: string): College | null {
+  return colleges[id] || null;
 }
 
 /**
@@ -30,26 +30,26 @@ export function getCourseById(courseId: string): CourseDetails | null {
 }
 
 /**
- * Get all favorite items
+ * Get all favorite items - now handled by useFavorites hook
  */
-export function getFavoriteItems(): FavoriteItem[] {
-  return favoriteItems;
+export function getFavoriteItems(): any[] {
+  return [];
 }
 
 /**
- * Find university that offers a specific course
+ * Find college that offers a specific course
  */
-export function getUniversityByCourseId(courseId: string): University | null {
-  for (const university of Object.values(universities)) {
-    if (university.courses.some(course => course.id === courseId)) {
-      return university;
+export function getCollegeByCourseId(courseId: string): College | null {
+  for (const college of Object.values(colleges)) {
+    if (college.courses.some(course => course === courseId)) {
+      return college;
     }
   }
   return null;
 }
 
 /**
- * Get all courses across all universities
+ * Get all courses across all colleges
  */
 export function getAllCourses(): CourseDetails[] {
   return Object.values(courses);
@@ -65,13 +65,13 @@ export function getCoursesByCategory(category: string): CourseDetails[] {
 }
 
 /**
- * Search universities by name or location
+ * Search colleges by name or location
  */
-export function searchUniversities(query: string): University[] {
+export function searchColleges(query: string): College[] {
   const searchTerm = query.toLowerCase();
-  return Object.values(universities).filter(university =>
-    university.name.toLowerCase().includes(searchTerm) ||
-    university.location.toLowerCase().includes(searchTerm)
+  return Object.values(colleges).filter(college =>
+    college.name.toLowerCase().includes(searchTerm) ||
+    `${college.district}, ${college.state}`.toLowerCase().includes(searchTerm)
   );
 }
 
@@ -85,4 +85,9 @@ export function searchCourses(query: string): CourseDetails[] {
     course.category.toLowerCase().includes(searchTerm) ||
     course.description.toLowerCase().includes(searchTerm)
   );
-} 
+}
+
+// Legacy function names for backward compatibility
+export const getUniversityById = getCollegeById;
+export const searchUniversities = searchColleges;
+export const getUniversityByCourseId = getCollegeByCourseId; 

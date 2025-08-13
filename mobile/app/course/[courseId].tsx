@@ -5,13 +5,15 @@ import { Feather } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { getCourseById } from '../../utils/data-helpers';
 import { FeeTableRow } from '../../components/ui';
+import { useFavorites } from '../../hooks/useFavorites';
 
 export default function CourseDetailsScreen() {
   const { courseId } = useLocalSearchParams<{ courseId: string }>();
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
   
   // Get course data using helper function
   const course = getCourseById(courseId as string);
+  const isCourseFavorite = course ? isFavorite(course.id, 'course') : false;
 
   // Fallback if course not found
   if (!course) {
@@ -30,8 +32,12 @@ export default function CourseDetailsScreen() {
     );
   }
 
-  const handleFavoritePress = () => {
-    setIsFavorited(!isFavorited);
+  const handleFavoritePress = async () => {
+    const result = await toggleFavorite(course.id, 'course');
+    if (result) {
+      // Optional: Show toast message
+      console.log(isFavorite(course.id, 'course') ? 'Added to favorites' : 'Removed from favorites');
+    }
   };
 
   const handleApplyNow = () => {
@@ -64,8 +70,8 @@ export default function CourseDetailsScreen() {
             <Feather 
               name="heart" 
               size={20} 
-              color={isFavorited ? "#EF4444" : "#6B7280"}
-              fill={isFavorited ? "#EF4444" : "none"}
+              color={isCourseFavorite ? "#EF4444" : "#6B7280"}
+              fill={isCourseFavorite ? "#EF4444" : "#6B7280"}
             />
           </TouchableOpacity>
         </View>
@@ -86,6 +92,26 @@ export default function CourseDetailsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
+        {/* Basic Info */}
+        <View className="bg-white mb-4">
+          <View className="p-4">
+            <View className="flex-row items-center mb-3">
+              <Feather name="clock" size={16} color="#6B7280" />
+              <Text className="text-sm text-gray-600 ml-2">Duration: {course.duration}</Text>
+            </View>
+            
+            <View className="flex-row items-center mb-3">
+              <Feather name="tag" size={16} color="#6B7280" />
+              <Text className="text-sm text-gray-600 ml-2">Type: {course.type}</Text>
+            </View>
+            
+            <View className="flex-row items-center mb-3">
+              <Feather name="calendar" size={16} color="#6B7280" />
+              <Text className="text-sm text-gray-600 ml-2">Application Deadline: {course.applicationDeadline}</Text>
+            </View>
+          </View>
+        </View>
+
         {/* Course Details Section */}
         <View className="bg-white mx-4 mt-4 p-4 rounded-xl border border-gray-100 shadow-sm">
           <Text className="text-lg font-bold text-gray-900 mb-4">Course Details</Text>
