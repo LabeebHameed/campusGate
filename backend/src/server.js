@@ -8,7 +8,6 @@ import collegeRoutes from "./routes/college.route.js";
 import applicationRoutes from "./routes/application.route.js";
 import documentRoutes from "./routes/document.route.js";
 import notificationRoutes from "./routes/notification.route.js";
-import webhookRoutes from "./routes/webhook.route.js";
 
 // import commentRoutes from "./routes/comment.route.js";
 // import notificationRoutes from "./routes/notification.route.js";
@@ -50,7 +49,6 @@ app.use("/api/college", collegeRoutes);
 app.use("/api/application", applicationRoutes);
 app.use("/api/document", documentRoutes);
 app.use("/api/notifications", notificationRoutes);
-app.use("/api/webhooks", webhookRoutes);
 
 // error handling middleware
 app.use((err, req, res, next) => {
