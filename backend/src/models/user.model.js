@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: { // Optional field for phone number
       type: String,
-      required: true,
+      required: false,
       default: "",
     },
     role: {

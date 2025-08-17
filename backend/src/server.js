@@ -22,7 +22,13 @@ const app = express();
 // lightweight health check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
-app.use(cors());
+// Configure CORS for development
+app.use(cors({
+  origin: true, // Allow all origins in development
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
 app.use(express.json());
 
 // Validate required envs early
@@ -61,10 +67,17 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    // listen for local development
-    if (ENV.NODE_ENV !== "production") {
-      app.listen(ENV.PORT, () => console.log("Server is up and running on PORT:", ENV.PORT));
-    }
+    // Always start server in development
+    const port = ENV.PORT || 5001;
+    console.log(`Attempting to start server on port ${port}...`);
+    console.log(`Environment: ${ENV.NODE_ENV || 'development'}`);
+    console.log(`Port from env: ${ENV.PORT || 'defaulting to 5001'}`);
+    
+    app.listen(port, "0.0.0.0", () => {
+      console.log(`✅ Server is up and running on PORT: ${port} and accessible from network`);
+      console.log(`🌐 Health check: http://192.168.1.13:${port}/health`);
+      console.log(`🔗 Local access: http://localhost:${port}/health`);
+    });
   } catch (error) {
     console.error("Failed to start server:", error.message);
     process.exit(1);
