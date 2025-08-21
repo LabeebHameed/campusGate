@@ -6,7 +6,7 @@ export const arcjetMiddleware = async (req, res, next) => {
   try {
     // Skip Arcjet protection for API routes to allow mobile app access
     if (req.path.startsWith('/api/')) {
-      console.log('Skipping Arcjet for API route:', req.path);
+      // Arcjet disabled for this route
       return next();
     }
 

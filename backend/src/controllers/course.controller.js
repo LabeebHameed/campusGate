@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Course from "../models/course.model.js";
+import { generateCourseId } from "../utils/idGenerator.js";
 
 // List all courses (public endpoint)
 export const getAllCourses = asyncHandler(async (req, res) => {
@@ -17,7 +18,13 @@ export const getCourseById = asyncHandler(async (req, res) => {
 
 // Create course (Protected)
 export const createCourse = asyncHandler(async (req, res) => {
-  const course = await Course.create({ ...req.body, id: generateUniqueId() });
+  const { collegeId } = req.body;
+  if (!collegeId) {
+    return res.status(400).json({ error: "collegeId is required" });
+  }
+  
+  const courseId = await generateCourseId(collegeId);
+  const course = await Course.create({ ...req.body, id: courseId });
   res.status(201).json({ course });
 });
 

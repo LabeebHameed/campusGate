@@ -22,9 +22,25 @@ const app = express();
 // lightweight health check
 app.get("/health", (req, res) => res.json({ status: "ok" }));
 
-// Configure CORS for development
+// Configure CORS
+const allowedOrigins = [
+  'https://campus-gate.vercel.app',
+  'https://campus-gate-mobile.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5001'
+];
+
 app.use(cors({
-  origin: true, // Allow all origins in development
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
@@ -63,27 +79,25 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: err.message || "Internal server error" });
 });
 
+// For Vercel deployment, just connect to DB
 const startServer = async () => {
   try {
     await connectDB();
-
-    // Always start server in development
-    const port = ENV.PORT || 5001;
-    console.log(`Attempting to start server on port ${port}...`);
-    console.log(`Environment: ${ENV.NODE_ENV || 'development'}`);
-    console.log(`Port from env: ${ENV.PORT || 'defaulting to 5001'}`);
+    console.log("Database connected successfully");
     
-    app.listen(port, "0.0.0.0", () => {
-      console.log(`✅ Server is up and running on PORT: ${port} and accessible from network`);
-      console.log(`🌐 Health check: http://192.168.1.13:${port}/health`);
-      console.log(`🔗 Local access: http://localhost:${port}/health`);
+    // Start the HTTP server
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on http://192.168.1.4:${PORT}`);
+      console.log(`Server also accessible on http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error("Failed to start server:", error.message);
+    console.error("Failed to connect to database:", error.message);
     process.exit(1);
   }
 };
 
+// Start server (both local and Vercel will connect to DB)
 startServer();
 
 export default app;

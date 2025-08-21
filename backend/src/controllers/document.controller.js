@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Document from "../models/document.model.js";
 import { getAuth } from "@clerk/express";
+import { generateDocumentId } from "../utils/idGenerator.js";
 import User from "../models/user.model.js";
 import cloudinary from "../config/cloudinary.js";
 
@@ -40,9 +41,9 @@ export const uploadDocument = asyncHandler(async (req, res) => {
     console.error("Cloudinary upload error:", err);
     return res.status(400).json({ error: "Failed to upload document" });
   }
-
+  const documentId = await generateDocumentId(userId);
   const document = await Document.create({
-    id: generateUniqueId(),      // Your preferred ID logic
+    id: documentId,
     ownerId: user._id,
     type,
     fileUrl,

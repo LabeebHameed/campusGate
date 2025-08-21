@@ -10,7 +10,16 @@ export const useSignOut = () => {
       {
         text: "Logout",
         style: "destructive",
-        onPress: () => signOut(),
+        onPress: async () => {
+          try {
+            await signOut();
+            // The AuthWrapper in _layout.tsx will automatically redirect to login
+            console.log("User signed out successfully");
+          } catch (error) {
+            console.error("Error during sign out:", error);
+            Alert.alert("Error", "Failed to logout. Please try again.");
+          }
+        },
       },
     ]);
   };

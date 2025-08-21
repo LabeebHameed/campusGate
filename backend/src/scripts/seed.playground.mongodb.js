@@ -1006,4 +1006,4 @@ db.getCollection('courses').insertMany([
   },
 ]);
 
-console.log('✅ Seeded colleges and courses successfully (Playground).');
+console.log('Seeded colleges and courses successfully.');

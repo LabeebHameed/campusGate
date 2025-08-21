@@ -11,8 +11,18 @@ export const useCurrentUser = () => {
     refetch,
   } = useQuery({
     queryKey: ["authUser"],
-    queryFn: () => userApi.getCurrentUser(api),
-    select: (response) => response.data.user,
+    queryFn: async () => {
+      try {
+        const response = await userApi.getCurrentUser(api);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+        throw error;
+      }
+    },
+    select: (data) => data?.user || data,
+    retry: 2,
+    retryDelay: 1000,
   });
 
   return { currentUser, isLoading, error, refetch };

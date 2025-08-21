@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Application from "../models/application.model.js";
 import { getAuth } from "@clerk/express";
+import { generateApplicationId } from "../utils/idGenerator.js";
 
 // Apply to a course
 export const applyToCourse = asyncHandler(async (req, res) => {
@@ -12,8 +13,9 @@ export const applyToCourse = asyncHandler(async (req, res) => {
   if (alreadyExists) 
     return res.status(400).json({ error: "Already applied to this course." });
 
+  const applicationId = await generateApplicationId(courseId, userId);
   const application = await Application.create({
-    id: generateUniqueId(), // Use your preferred UUID or logic
+    id: applicationId,
     studentId: userId,
     courseId,
     submittedDocuments,

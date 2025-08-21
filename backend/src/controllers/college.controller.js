@@ -1,12 +1,6 @@
 import asyncHandler from "express-async-handler";
 import College from "../models/college.model.js";
-
-
-// function generateUniqueId() {
-//   const timestamp = Date.now();
-//   const randomNumber = Math.random().toString(36).substring(2, 15); // Random alphanumeric string
-//   return `${timestamp}-${randomNumber}`;
-// } OR USE UUID/v4 from uuid package
+import { generateUniqueId } from "../utils/idGenerator.js";
 
 
 // List all colleges (public)

@@ -11,7 +11,7 @@ export const connectDB = async () => {
       serverSelectionTimeoutMS: 8000,
     });
 
-    console.log("Connected to DB SUCCESSFULLY ✅");
+    console.log("Database connected successfully");
   } catch (error) {
     console.error("Error connecting to MongoDB:", error?.message || error);
     // Helpful hints for common failures without leaking secrets

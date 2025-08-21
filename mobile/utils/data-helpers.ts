@@ -2,6 +2,20 @@ import { colleges, courseDetails as courses, type College, type CourseDetails } 
 import { CarouselItem } from '../types';
 
 /**
+ * Convert category ID to proper state name for filtering
+ */
+function categoryIdToStateName(categoryId: string): string {
+  const stateMapping: { [key: string]: string } = {
+    'maharashtra': 'Maharashtra',
+    'tamil-nadu': 'Tamil Nadu',
+    'karnataka': 'Karnataka',
+    'gujarat': 'Gujarat',
+    'west-bengal': 'West Bengal'
+  };
+  return stateMapping[categoryId] || categoryId;
+}
+
+/**
  * Transform college data to carousel format for home page
  */
 export function getCarouselData(): CarouselItem[] {
@@ -13,6 +27,25 @@ export function getCarouselData(): CarouselItem[] {
     rating: college.rating,
     reviews: college.reviews.replace('Reviews', 'reviews')
   }));
+}
+
+/**
+ * Get filtered carousel data by state (limited to first 5 items)
+ */
+export function getFilteredCarouselData(categoryId: string): CarouselItem[] {
+  const stateName = categoryIdToStateName(categoryId);
+  
+  return Object.values(colleges)
+    .filter(college => college.state === stateName)
+    .slice(0, 5)
+    .map(college => ({
+      id: college.id,
+      imageUrl: college.image,
+      title: college.name,
+      location: `${college.district}, ${college.state}`,
+      rating: college.rating,
+      reviews: college.reviews.replace('Reviews', 'reviews')
+    }));
 }
 
 /**

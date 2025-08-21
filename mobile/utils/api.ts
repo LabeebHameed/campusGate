@@ -1,9 +1,11 @@
 import axios, { AxiosInstance } from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 
-const API_BASE_URL = "https://campus-gate.vercel.app/api";
-// ! 🔥 localhost api would not work on your actual physical device
-// const API_BASE_URL = "http://localhost:5001/api";
+// For physical device testing, use your computer's IP address
+// Find your IP with: ipconfig (Windows) or ifconfig (Mac/Linux)
+const API_BASE_URL = "http://192.168.1.5:3000/api"; // Replace with your actual IP
+// const API_BASE_URL = "http://localhost:5001/api"; // Only works on simulator/emulator
+// const API_BASE_URL = "https://campus-gate-backend.vercel.app/api"; // Production
 
 // this will basically create an authenticated api, pass the token into our headers
 export const createApiClient = (getToken: () => Promise<string | null>): AxiosInstance => {
@@ -53,14 +55,14 @@ export const documentApi = {
 
 export const applicationApi = {
   applyToCourse: (api: AxiosInstance, data: { courseId: string; documents?: string[]; personalStatement?: string }) =>
-    api.post("/applications", data),
-  getUserApplications: (api: AxiosInstance) => api.get("/applications"),
+    api.post("/application", data),
+  getUserApplications: (api: AxiosInstance) => api.get("/application"),
   getApplicationById: (api: AxiosInstance, applicationId: string) =>
-    api.get(`/applications/${applicationId}`),
+    api.get(`/application/${applicationId}`),
   updateApplication: (api: AxiosInstance, applicationId: string, data: any) =>
-    api.patch(`/applications/${applicationId}`, data),
+    api.patch(`/application/${applicationId}`, data),
   deleteApplication: (api: AxiosInstance, applicationId: string) =>
-    api.delete(`/applications/${applicationId}`),
+    api.delete(`/application/${applicationId}`),
 };
 
 export const collegeApi = {

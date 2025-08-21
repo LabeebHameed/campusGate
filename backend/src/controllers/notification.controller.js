@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Notification from "../models/notification.model.js";
 import { getAuth } from "@clerk/express";
+import { generateUniqueId } from "../utils/idGenerator.js";
 
 // CREATE notification (system or admin)
 export const createNotification = asyncHandler(async (req, res) => {
