@@ -1,11 +1,9 @@
 import axios, { AxiosInstance } from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 
-// For physical device testing, use your computer's IP address
-// Find your IP with: ipconfig (Windows) or ifconfig (Mac/Linux)
-const API_BASE_URL = "http://192.168.1.5:3000/api"; // Replace with your actual IP
-// const API_BASE_URL = "http://localhost:5001/api"; // Only works on simulator/emulator
-// const API_BASE_URL = "https://campus-gate-backend.vercel.app/api"; // Production
+const API_BASE_URL = "https://campus-gate-backend.vercel.app/api";
+// ! 🔥 localhost api would not work on your actual physical device
+// const API_BASE_URL = "http://localhost:5001/api";
 
 // this will basically create an authenticated api, pass the token into our headers
 export const createApiClient = (getToken: () => Promise<string | null>): AxiosInstance => {
